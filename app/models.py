@@ -4,9 +4,8 @@ from typing import Optional
 import sqlalchemy as sa
 import sqlalchemy.orm as so
 from werkzeug.security import generate_password_hash, check_password_hash
-from app import db, login  # Imported login here
+from app import db, login
 from flask_login import UserMixin
-
 
 class User(UserMixin, db.Model):
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
@@ -25,6 +24,11 @@ class User(UserMixin, db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash or '', password)
 
+    def avatar(self, size):
+        """Generates a Gravatar URL for the user's email address."""
+        digest = md5(self.email.lower().encode('utf-8')).hexdigest()
+        return f'https://www.gravatar.com/avatar/{digest}?d=identicon&s={size}'
+
 @login.user_loader
 def load_user(id):
     return db.session.get(User, int(id))
@@ -40,7 +44,3 @@ class Post(db.Model):
 
     def __repr__(self):
         return f'<Post {self.body}>'
-    
-def avatar(self, size):
-        digest = md5(self.email.lower().encode('utf-8')).hexdigest()
-        return f'https://www.gravatar.com/avatar/{digest}?d=identicon&s={size}'
