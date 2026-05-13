@@ -1,3 +1,4 @@
+from hashlib import md5
 from datetime import datetime, timezone
 from typing import Optional
 import sqlalchemy as sa
@@ -5,7 +6,7 @@ import sqlalchemy.orm as so
 from werkzeug.security import generate_password_hash, check_password_hash
 from app import db, login  # Imported login here
 from flask_login import UserMixin
-from hashlib import md5
+
 
 class User(UserMixin, db.Model):
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
