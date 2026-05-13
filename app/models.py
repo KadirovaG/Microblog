@@ -5,6 +5,7 @@ import sqlalchemy.orm as so
 from werkzeug.security import generate_password_hash, check_password_hash
 from app import db, login  # Imported login here
 from flask_login import UserMixin
+from hashlib import md5
 
 class User(UserMixin, db.Model):
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
@@ -38,3 +39,7 @@ class Post(db.Model):
 
     def __repr__(self):
         return f'<Post {self.body}>'
+    
+def avatar(self, size):
+        digest = md5(self.email.lower().encode('utf-8')).hexdigest()
+        return f'https://www.gravatar.com/avatar/{digest}?d=identicon&s={size}'
