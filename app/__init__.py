@@ -15,4 +15,4 @@ login = LoginManager(app)
 login.login_view = 'login'  # type: ignore
 
 # The bottom import prevents circular dependencies
-from app import routes, models  # noqa: E402, F401
+from app import routes, models, errors  # noqa: E402, F401

@@ -28,7 +28,7 @@ class User(UserMixin, db.Model):
         return check_password_hash(self.password_hash or '', password)
 
     def avatar(self, size):
-        """Generates a Gravatar URL for the user's email address."""
+        """Generates a Gravatar URL. To see Miguel, use miguel@example.com"""
         digest = md5(self.email.lower().encode('utf-8')).hexdigest()
         return f'https://www.gravatar.com/avatar/{digest}?d=identicon&s={size}'
 
