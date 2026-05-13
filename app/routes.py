@@ -6,6 +6,10 @@ import sqlalchemy as sa
 from app.models import User
 from urllib.parse import urlsplit
 
+@app.route('/')
+@app.route('/index')
+def index():
+    return render_template('index.html', title='Home')
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
