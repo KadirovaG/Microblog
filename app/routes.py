@@ -6,7 +6,7 @@ from app import app, db
 from app.forms import LoginForm, RegistrationForm, EditProfileForm, \
     EmptyForm, PostForm
 from app.models import User, Post
-import sqlalchemy as sa  # Corrected from 'sax'
+import sqlalchemy as sa 
 
 @app.before_request
 def before_request():
@@ -27,11 +27,7 @@ def index():
         flash('Your post is now live!')
         return redirect(url_for('index'))
     
-    # Chapter 9 Pagination Logic
     page = request.args.get('page', 1, type=int)
-    
-    # We use db.paginate() to handle the query + pagination in one go
-    # current_user.following_posts() should return a select() object
     query = current_user.following_posts()
     posts = db.paginate(query, page=page,
                         per_page=app.config['POSTS_PER_PAGE'],
@@ -105,6 +101,7 @@ def register():
 def user(username):
     user = db.first_or_404(sa.select(User).filter_by(username=username))
     page = request.args.get('page', 1, type=int)
+    # Correct query for personal profile posts
     query = user.posts.select().order_by(Post.timestamp.desc())
     posts = db.paginate(query, page=page,
                         per_page=app.config['POSTS_PER_PAGE'],
