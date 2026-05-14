@@ -107,3 +107,6 @@ class Post(db.Model):
 
     def __repr__(self):
         return f'<Post {self.body}>'
+    def avatar(self, size):
+        digest = md5(self.email.lower().encode('utf-8')).hexdigest() # type: ignore
+        return f'https://www.gravatar.com/avatar/{digest}?d=identicon&s={size}'
