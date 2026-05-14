@@ -1,60 +1,33 @@
 {% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
 
-{% block content %}
+{% block app_content %}
     <h1>Hi, {{ current_user.username }}!</h1>
-    
-    <!-- Your Post Form Logic -->
     {% if form %}
-    <form action="" method="post">
-       {{ form.hidden_tag() }}
-    <p>
-        {{ form.post.label }}<br>
-        <!-- Adding the class here makes it full-width and styled -->
-        {{ form.post(class="form-control", cols=32, rows=4) }}<br>
-        {% for error in form.post.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}
-    </p>
-    <p>{{ form.submit(class="btn btn-primary") }}</p>
-</form>
+    <div class="row">
+        <div class="col-md-4">
+            {{ wtf.quick_form(form) }}
+        </div>
+    </div>
+    <br>
     {% endif %}
-
-    <!-- Your Posts Loop with Avatars -->
+    
     {% for post in posts %}
-    <table>
-        <tr valign="top">
-            <!-- This line fetches the avatar image -->
-            <td><img src="{{ post.author.avatar(36) }}"></td>
-            <td>
-                <a href="{{ url_for('user', username=post.author.username) }}">
-                    {{ post.author.username }}
-                </a> says:<br>{{ post.body }}
-            </td>
-        </tr>
-    </table>
+        {% include '_post.html' %}
     {% endfor %}
-
-    <!-- Pagination Links (Chapter 9) -->
-    {% if prev_url %}
-    <a href="{{ prev_url }}">Newer posts</a>
-    {% endif %}
-    {% if next_url %}
-    <a href="{{ next_url }}">Older posts</a>
-    {% endif %}
-
-    <nav aria-label="Post navigation">
-        <ul class="pagination">
-            <li class="page-item{% if not prev_url %} disabled{% endif %}">
-                <a class="page-link" href="{{ prev_url }}">
+    
+    <nav aria-label="...">
+        <ul class="pager">
+            <li class="previous{% if not prev_url %} disabled{% endif %}">
+                <a href="{{ prev_url or '#' }}">
                     <span aria-hidden="true">&larr;</span> Newer posts
                 </a>
             </li>
-            <li class="page-item{% if not next_url %} disabled{% endif %}">
-                <a class="page-link" href="{{ next_url }}">
+            <li class="next{% if not next_url %} disabled{% endif %}">
+                <a href="{{ next_url or '#' }}">
                     Older posts <span aria-hidden="true">&rarr;</span>
                 </a>
             </li>
         </ul>
     </nav>
-
 {% endblock %}

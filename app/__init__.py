@@ -1,24 +1,28 @@
 from flask import Flask
 from config import Config
-from flask_sqlalchemy import SQLAlchemy # type: ignore
-from flask_migrate import Migrate # type: ignore
-from flask_login import LoginManager # type: ignore
+from flask_sqlalchemy import SQLAlchemy 
+from flask_migrate import Migrate 
+from flask_login import LoginManager 
 import logging
-from logging.handlers import SMTPHandler, RotatingFileHandler # Added RotatingFileHandler
-import os # Added os to create the logs folder
-from flask_mail import Mail # type: ignore
+from logging.handlers import SMTPHandler, RotatingFileHandler 
+import os 
+from flask_mail import Mail  # type: ignore
 from flask_moment import Moment
+from flask_bootstrap import Bootstrap  # 1. Added this import
 
 app = Flask(__name__)
 app.config.from_object(Config)
+
+# Initialize extensions
 mail = Mail(app)
 moment = Moment(app)
+bootstrap = Bootstrap(app)  # 2. Added this line
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
 login = LoginManager(app)
-login.login_view = 'login'  # type: ignore
+login.login_view = 'login'   # type: ignore
 
 if not app.debug:
     # --- 1. Email Logging ---
@@ -37,7 +41,7 @@ if not app.debug:
         mail_handler.setLevel(logging.ERROR)
         app.logger.addHandler(mail_handler)
 
-    # --- 2. File Logging (Missing piece) ---
+    # --- 2. File Logging ---
     if not os.path.exists('logs'):
         os.mkdir('logs')
     file_handler = RotatingFileHandler('logs/microblog.log', maxBytes=10240,
@@ -50,5 +54,4 @@ if not app.debug:
     app.logger.setLevel(logging.INFO)
     app.logger.info('Microblog startup')
 
-# The bottom import prevents circular dependencies
 from app import routes, models, errors  # noqa: E402, F401
