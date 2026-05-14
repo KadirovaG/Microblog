@@ -6,9 +6,11 @@ from flask_login import LoginManager
 import logging
 from logging.handlers import SMTPHandler, RotatingFileHandler # Added RotatingFileHandler
 import os # Added os to create the logs folder
+from flask_mail import Mail
 
 app = Flask(__name__)
 app.config.from_object(Config)
+mail = Mail(app)
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)

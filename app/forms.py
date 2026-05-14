@@ -1,9 +1,9 @@
-from wtforms import TextAreaField
-from wtforms.validators import Length
-from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
-from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
-import sqlalchemy as sa
+from wtforms import TextAreaField # type: ignore
+from wtforms.validators import Length # type: ignore
+from flask_wtf import FlaskForm # type: ignore
+from wtforms import StringField, PasswordField, BooleanField, SubmitField # type: ignore
+from wtforms.validators import ValidationError, DataRequired, Email, EqualTo # type: ignore
+import sqlalchemy as sa # type: ignore
 from app import db
 from app.models import User
 
@@ -61,3 +61,13 @@ class PostForm(FlaskForm):
     post = TextAreaField('Say something', validators=[
         DataRequired(), Length(min=1, max=140)])
     submit = SubmitField('Submit')
+
+class ResetPasswordRequestForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    submit = SubmitField('Request Password Reset')
+
+class ResetPasswordForm(FlaskForm):
+    password = PasswordField('Password', validators=[DataRequired()])
+    password2 = PasswordField(
+        'Repeat Password', validators=[DataRequired(), EqualTo('password')])
+    submit = SubmitField('Request Password Reset')
