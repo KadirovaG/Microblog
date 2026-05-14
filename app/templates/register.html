@@ -2,11 +2,8 @@
 
 {% block content %}
     <h1>Register</h1>
-    <form action="" method="post" novalidate>
-        {{ form.hidden_tag() }}
-        <p>
-            {{ form.username.label }}<br>
-            {{ form.username(size=32) }}<br>
+     {{ wtf.quick_form(form) }}
+{% endblock %}
             {% for error in form.username.errors %}
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
