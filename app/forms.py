@@ -1,8 +1,9 @@
-from flask_wtf import FlaskForm # type: ignore
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, TextAreaField # type: ignore
-from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError # type: ignore
-from flask_babel import lazy_gettext as _l # type: ignore
-import sqlalchemy as sa # type: ignore
+from flask import request # type: ignore
+from flask_wtf import FlaskForm  # type: ignore
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, TextAreaField  # type: ignore
+from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError  # type: ignore
+from flask_babel import lazy_gettext as _l  # type: ignore
+import sqlalchemy as sa  # type: ignore
 from app import db
 from app.models import User
 
@@ -71,4 +72,15 @@ class ResetPasswordForm(FlaskForm):
     password = PasswordField(_l('Password'), validators=[DataRequired()])
     password2 = PasswordField(
         _l('Repeat Password'), validators=[DataRequired(), EqualTo('password')])
-    submit = SubmitField(_l('Request Password Reset'))
+    submit = SubmitField(_l('Reset Password'))
+
+
+class SearchForm(FlaskForm):
+    q = StringField(_l('Search'), validators=[DataRequired()])
+
+    def __init__(self, *args, **kwargs):
+        if 'formdata' not in kwargs:
+            kwargs['formdata'] = request.args
+        if 'meta' not in kwargs:
+            kwargs['meta'] = {'csrf': False}
+        super(SearchForm, self).__init__(*args, **kwargs)

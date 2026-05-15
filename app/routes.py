@@ -1,16 +1,16 @@
 
 from datetime import datetime, timezone
 from urllib.parse import urlsplit
-from flask import render_template, flash, redirect, url_for, request # type: ignore
-from flask_login import current_user, login_user, logout_user, login_required # type: ignore
-import sqlalchemy as sa # type: ignore
+from flask import render_template, flash, redirect, url_for, request, g  # type: ignore
+from flask_babel import _, get_locale # type: ignore
+from flask_login import current_user, login_user, logout_user, login_required  # type: ignore
+import sqlalchemy as sa  # type: ignore
 from app import app, db
-from app.forms import LoginForm, RegistrationForm, EditProfileForm
-from app.models import User
-from app.forms import LoginForm, RegistrationForm, EditProfileForm, EmptyForm, PostForm, ResetPasswordRequestForm, ResetPasswordForm  # noqa: F811
-from app.models import User, Post  # noqa: F811
+from app.forms import (LoginForm, RegistrationForm, EditProfileForm, EmptyForm,
+                       PostForm, ResetPasswordRequestForm, ResetPasswordForm,
+                       SearchForm)
+from app.models import User, Post
 from app.email import send_password_reset_email
-from flask_babel import _ # type: ignore
 
 @app.route('/reset_password_request', methods=['GET', 'POST'])
 def reset_password_request():
@@ -100,6 +100,8 @@ def before_request():
     if current_user.is_authenticated:
         current_user.last_seen = datetime.now(timezone.utc)
         db.session.commit()
+        g.search_form = SearchForm()
+    g.locale = str(get_locale())
        
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
@@ -107,7 +109,7 @@ def before_request():
 def index():
     form = PostForm()
     if form.validate_on_submit():
-        post = Post(body=form.post.data, author=current_user)
+        post = Post(body=form.post.data, author=current_user) # type: ignore
         db.session.add(post)
         db.session.commit()
         flash(_('Your post is now live!'))
@@ -189,7 +191,25 @@ def edit_profile():
         current_user.about_me = form.about_me.data
         db.session.commit()
         flash(_('Your changes have been saved.'))
-        return redirect(url_for('|user', username=current_user.username))
+        return redirect(url_for('user', username=current_user.username))
+    elif request.method == 'GET':
         form.username.data = current_user.username
         form.about_me.data = current_user.about_me
     return render_template('edit_profile.html', title='Edit Profile', form=form)
+
+
+@app.route('/search')
+@login_required
+def search():
+    if not g.search_form.validate():
+        return redirect(url_for('explore'))
+    page = request.args.get('page', 1, type=int)
+    posts, total = Post.search(g.search_form.q.data, page,
+                               app.config['POSTS_PER_PAGE'])
+    next_url = url_for('search', q=g.search_form.q.data, page=page + 1) \
+        if total > page * app.config['POSTS_PER_PAGE'] else None
+    prev_url = url_for('search', q=g.search_form.q.data, page=page - 1) \
+        if page > 1 else None
+    return render_template('search.html', title=_('Search Results'),
+                           posts=posts, total=total,
+                           next_url=next_url, prev_url=prev_url)
