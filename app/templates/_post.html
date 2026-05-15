@@ -6,26 +6,22 @@
             </a>
         </td>
         <td>
-            {% set user_link %}
-                <a href="{{ url_for('user', username=post.author.username) }}">
-                    {{ post.author.username }}
-                </a>
-            {% endset %}
-            {{ _('%(username)s said %(when)s',
-                username=user_link, when=moment(post.timestamp).fromNow()) }}
+            <a href="{{ url_for('user', username=post.author.username) }}">
+                {{ post.author.username }}
+            </a>
+            {{ _('%(when)s ago', when=moment(post.timestamp).fromNow()) }}:
             <br>
-            
-            <!-- We add an ID to this span so JavaScript can find the text to translate -->
             <span id="post{{ post.id }}">{{ post.body }}</span>
 
-            <!-- Translation Link Engine Check -->
             {% if post.language and post.language != g.locale %}
-                <br><br>
-                <span id="translation{{ post.id }}">
-                    <a href="javascript:translate('post{{ post.id }}', 'translation{{ post.id }}', '{{ post.language }}', '{{ g.locale }}');">
-                        {{ _('Translate') }}
-                    </a>
-                </span>
+            <br><br>
+            <span id="translation{{ post.id }}">
+                <a href="javascript:translate(
+                            '#post{{ post.id }}',
+                            '#translation{{ post.id }}',
+                            '{{ post.language }}',
+                            '{{ g.locale }}');">{{ _('Translate') }}</a>
+            </span>
             {% endif %}
         </td>
     </tr>

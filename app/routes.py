@@ -1,4 +1,5 @@
-
+from app.translate import translate
+from langdetect import detect, LangDetectException # type: ignore
 from datetime import datetime, timezone
 from urllib.parse import urlsplit
 from flask import render_template, flash, redirect, url_for, request, g  # type: ignore
@@ -109,7 +110,15 @@ def before_request():
 def index():
     form = PostForm()
     if form.validate_on_submit():
-        post = Post(body=form.post.data, author=current_user) # type: ignore
+        # --- LANGUAGE DETECTION LOGIC ---
+        try:
+            language = detect(form.post.data)
+        except LangDetectException:
+            language = ''
+        # --------------------------------
+        
+        post = Post(body=form.post.data, author=current_user, # type: ignore
+                    language=language) # type: ignore # Pass the detected language here
         db.session.add(post)
         db.session.commit()
         flash(_('Your post is now live!'))
@@ -213,3 +222,11 @@ def search():
     return render_template('search.html', title=_('Search Results'),
                            posts=posts, total=total,
                            next_url=next_url, prev_url=prev_url)
+
+@app.route('/translate', methods=['POST'])
+@login_required
+def translate_text():
+    data = request.get_json()
+    return {'text': translate(data['text'],
+                              data['source_language'],
+                              data['dest_language'])}

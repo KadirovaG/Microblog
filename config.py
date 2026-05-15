@@ -6,7 +6,7 @@ class Config(object):
     # This tells Flask-SQLAlchemy where the database file is
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
         'sqlite:///' + os.path.join(basedir, 'app.db')
-    
+    MS_TRANSLATOR_KEY = os.environ.get('MS_TRANSLATOR_KEY')
     
     POSTS_PER_PAGE = 25
     LANGUAGES = ['en', 'es']

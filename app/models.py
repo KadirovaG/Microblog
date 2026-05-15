@@ -1,3 +1,4 @@
+from typing import Optional
 from datetime import datetime, timezone
 from hashlib import md5
 from app import db, login
@@ -140,6 +141,7 @@ class Post(SearchableMixin, db.Model):
     timestamp = db.Column(db.DateTime, index=True,
                           default=lambda: datetime.now(timezone.utc))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    language: so.Mapped[Optional[str]] = so.mapped_column(sa.String(5))
     author = so.relationship('User', back_populates='posts')
 
 
