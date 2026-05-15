@@ -24,7 +24,7 @@ msgstr ""
 
 #: app/forms.py:13 app/forms.py:19 app/forms.py:40
 msgid "Username"
-msgstr ""
+msgstr "Nombre de usuario"
 
 #: app/forms.py:14 app/forms.py:21 app/forms.py:68
 msgid "Password"
@@ -117,7 +117,7 @@ msgstr ""
 #: app/routes.py:180 app/routes.py:199
 #, python-format
 msgid "User %(username)s not found."
-msgstr ""
+msgstr "¡Hola, %(username)s!"
 
 #: app/routes.py:183
 msgid "You cannot follow yourself!"
