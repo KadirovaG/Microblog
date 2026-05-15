@@ -1,25 +1,14 @@
-<table class="table table-hover">
-    <tr>
-        <td width="70px">
-            <a href="{{ url_for('user', username=post.author.username) }}">
-                <img src="{{ post.author.avatar(70) }}" />
-            </a>
-        </td>
-        <td>
-            {% set user_link %}
+<table>
+        <tr valign="top">
+            <td><img src="{{ post.author.avatar(36) }}"></td>
+            <td>
                 <a href="{{ url_for('user', username=post.author.username) }}">
                     {{ post.author.username }}
                 </a>
-            {% endset %}
-            
-            {# This combines the username link and the time into one translatable string #}
-            {{ _('%(username)s said %(when)s',
-                username=user_link, 
-                when=moment(post.timestamp).fromNow()) 
-            }}
-            
-            <br>
-            <span id="post{{ post.id }}">{{ post.body }}</span>
-        </td>
-    </tr>
-</table>
+                {{ _('%(username)s said %(when)s', 
+                    username=post.author.username, when=moment(post.timestamp).fromNow()) }}
+                <br>
+                {{ post.body }}
+            </td>
+        </tr>
+    </table>

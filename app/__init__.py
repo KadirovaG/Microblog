@@ -24,11 +24,12 @@ bootstrap = Bootstrap(app)
 moment = Moment(app)
 babel = Babel(app)
 
+
 def get_locale():
-    return 'es'  # This forces Spanish for your test
+    return request.accept_languages.best_match(app.config['LANGUAGES'])
 
 babel = Babel(app, locale_selector=get_locale)
-from app import routes, models, errors  # noqa: E402, F401
+from app import routes, models, errors, cli  # noqa: E402, F401
 
 if not app.debug:
     # Email Logging Setup
