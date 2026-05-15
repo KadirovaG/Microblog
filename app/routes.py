@@ -5,13 +5,12 @@ from flask import render_template, flash, redirect, url_for, request # type: ign
 from flask_login import current_user, login_user, logout_user, login_required # type: ignore
 import sqlalchemy as sa # type: ignore
 from app import app, db
-from app.forms import LoginForm, RegistrationForm, EditProfileForm, EmptyForm
+from app.forms import LoginForm, RegistrationForm, EditProfileForm
 from app.models import User
 from app.forms import LoginForm, RegistrationForm, EditProfileForm, EmptyForm, PostForm, ResetPasswordRequestForm, ResetPasswordForm  # noqa: F811
 from app.models import User, Post  # noqa: F811
 from app.email import send_password_reset_email
 from flask_babel import _ # type: ignore
-
 
 @app.route('/reset_password_request', methods=['GET', 'POST'])
 def reset_password_request():
@@ -101,7 +100,7 @@ def before_request():
     if current_user.is_authenticated:
         current_user.last_seen = datetime.now(timezone.utc)
         db.session.commit()
-
+       
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
 @login_required

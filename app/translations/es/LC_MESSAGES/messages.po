@@ -28,7 +28,7 @@ msgstr "Nombre de usuario"
 
 #: app/forms.py:14 app/forms.py:21 app/forms.py:68
 msgid "Password"
-msgstr ""
+msgstr "Contraseña"
 
 #: app/forms.py:15
 msgid "Remember Me"

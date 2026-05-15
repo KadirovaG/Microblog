@@ -5,8 +5,8 @@ Revises: dd842c6da0e8
 Create Date: 2026-05-15 15:20:59.357953
 
 """
-from alembic import op
-import sqlalchemy as sa
+from alembic import op # type: ignore
+import sqlalchemy as sa # type: ignore
 
 
 # revision identifiers, used by Alembic.
@@ -39,8 +39,8 @@ def upgrade():
                nullable=True)
         batch_op.drop_index(batch_op.f('ix_user_email'))
         batch_op.drop_index(batch_op.f('ix_user_username'))
-        batch_op.create_unique_constraint(None, ['email'])
-        batch_op.create_unique_constraint(None, ['username'])
+        batch_op.create_unique_constraint('uq_user_username', ['username'])
+        batch_op.create_unique_constraint('uq_user_email', ['email'])
 
     # ### end Alembic commands ###
 
