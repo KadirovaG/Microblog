@@ -6,16 +6,20 @@
             </a>
         </td>
         <td>
-            <a href="{{ url_for('user', username=post.author.username) }}">
-                {{ post.author.username }}
-            </a>
-            says:
+            {% set user_link %}
+                <a href="{{ url_for('user', username=post.author.username) }}">
+                    {{ post.author.username }}
+                </a>
+            {% endset %}
+            
+            {# This combines the username link and the time into one translatable string #}
+            {{ _('%(username)s said %(when)s',
+                username=user_link, 
+                when=moment(post.timestamp).fromNow()) 
+            }}
+            
             <br>
-            {{ post.body }}
-            <br>
-            <span style="color: #777;">
-                {{ moment(post.timestamp).fromNow() }}
-            </span>
+            <span id="post{{ post.id }}">{{ post.body }}</span>
         </td>
     </tr>
 </table>

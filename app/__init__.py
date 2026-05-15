@@ -1,31 +1,37 @@
-from flask import Flask
-from config import Config
-from flask_sqlalchemy import SQLAlchemy 
-from flask_migrate import Migrate 
-from flask_login import LoginManager 
 import logging
-from logging.handlers import SMTPHandler, RotatingFileHandler 
-import os 
-from flask_mail import Mail  # type: ignore
+from logging.handlers import SMTPHandler, RotatingFileHandler
+import os
+from flask import Flask, request
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
+from flask_login import LoginManager
+from flask_mail import Mail # type: ignore
+from flask_bootstrap import Bootstrap
 from flask_moment import Moment
-from flask_bootstrap import Bootstrap  # 1. Added this import
+from flask_babel import Babel, lazy_gettext as _l
+from config import Config
 
 app = Flask(__name__)
 app.config.from_object(Config)
 
-# Initialize extensions
-mail = Mail(app)
-moment = Moment(app)
-bootstrap = Bootstrap(app)  # 2. Added this line
-
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
-
 login = LoginManager(app)
-login.login_view = 'login'   # type: ignore
+login.login_view = 'login' # type: ignore
+login.login_message = _l('Please log in to access this page.') # type: ignore
+mail = Mail(app)
+bootstrap = Bootstrap(app)
+moment = Moment(app)
+babel = Babel(app)
+
+def get_locale():
+    return 'es'  # This forces Spanish for your test
+
+babel = Babel(app, locale_selector=get_locale)
+from app import routes, models, errors  # noqa: E402, F401
 
 if not app.debug:
-    # --- 1. Email Logging ---
+    # Email Logging Setup
     if app.config['MAIL_SERVER']:
         auth = None
         if app.config['MAIL_USERNAME'] or app.config['MAIL_PASSWORD']:
@@ -41,7 +47,7 @@ if not app.debug:
         mail_handler.setLevel(logging.ERROR)
         app.logger.addHandler(mail_handler)
 
-    # --- 2. File Logging ---
+    # File Logging Setup
     if not os.path.exists('logs'):
         os.mkdir('logs')
     file_handler = RotatingFileHandler('logs/microblog.log', maxBytes=10240,
@@ -53,5 +59,3 @@ if not app.debug:
 
     app.logger.setLevel(logging.INFO)
     app.logger.info('Microblog startup')
-
-from app import routes, models, errors  # noqa: E402, F401
